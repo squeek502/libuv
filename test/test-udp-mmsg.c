@@ -67,16 +67,20 @@ static void recv_cb(uv_udp_t* handle,
                        unsigned flags) {
   ASSERT_GE(nread, 0);
 
-  if (nread > 0) {
-    ASSERT_EQ(nread, 4);
-    ASSERT(addr != NULL);
-    ASSERT_MEM_EQ("PING", rcvbuf->base, nread);
+  /* free and return if this is a mmsg free-only callback invocation */
+  if (flags & UV_UDP_MMSG_FREE) {
+    free(rcvbuf->base);
+    return;
+  }
 
-    recv_cb_called++;
-    if (recv_cb_called == NUM_SENDS) {
-      uv_close((uv_handle_t*)handle, close_cb);
-      uv_close((uv_handle_t*)&sender, close_cb);
-    }
+  ASSERT_EQ(nread, 4);
+  ASSERT(addr != NULL);
+  ASSERT_MEM_EQ("PING", rcvbuf->base, nread);
+
+  recv_cb_called++;
+  if (recv_cb_called == NUM_SENDS) {
+    uv_close((uv_handle_t*)handle, close_cb);
+    uv_close((uv_handle_t*)&sender, close_cb);
   }
 
   /* Don't free if the buffer could be reused via mmsg */
