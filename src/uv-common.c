@@ -310,10 +310,6 @@ int uv_udp_init_ex(uv_loop_t* loop, uv_udp_t* handle, unsigned flags) {
 
   rc = uv__udp_init_ex(loop, handle, flags, domain);
 
-  if (rc == 0)
-    if (extra_flags & UV_UDP_RECVMMSG)
-      handle->flags |= UV_HANDLE_UDP_RECVMMSG;
-
   return rc;
 }
 

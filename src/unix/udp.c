@@ -969,7 +969,17 @@ int uv__udp_init_ex(uv_loop_t* loop,
   QUEUE_INIT(&handle->write_queue);
   QUEUE_INIT(&handle->write_completed_queue);
 
+#if HAVE_MMSG
+  if (flags & UV_UDP_RECVMMSG)
+    handle->flags |= UV_HANDLE_UDP_RECVMMSG;
+#endif
+
   return 0;
+}
+
+
+int uv_udp_is_using_recvmmsg(const uv_udp_t* handle) {
+  return !!(handle->flags & UV_HANDLE_UDP_RECVMMSG);
 }
 
 
