@@ -2113,7 +2113,7 @@ TEST_IMPL(spawn_relative_path) {
 }
 
 #ifdef _WIN32
-static int test_batch_script(const char* file, int argc, const char** argv) {
+static int test_batch_script(char* file, int argc, char** argv) {
   uv_stdio_container_t stdio[2];
   uv_pipe_t out;
   int i, arg_i = 0;
@@ -2182,7 +2182,7 @@ static int test_batch_script(const char* file, int argc, const char** argv) {
 }
 
 TEST_IMPL(spawn_batch_script_arguments) {
-  const char* batch_file = "args.bat";
+  char* batch_file = "args.bat";
   uv_fs_t fs_req;
   uv_file file;
   char test_buf[1024];
@@ -2252,146 +2252,146 @@ TEST_IMPL(spawn_batch_script_arguments) {
   }
   {
     /* \r is rejected since it can't round trip */
-    const char* test_args[] = {"\r"};
+    char* test_args[] = {"\r"};
     r = test_batch_script("args.bat", 1, test_args);
     ASSERT_EQ(r, UV_EINVAL);
   }
   {
     /* \n is rejected since it can't round trip */
-    const char* test_args[] = {"\n"};
+    char* test_args[] = {"\n"};
     r = test_batch_script("args.bat", 1, test_args);
     ASSERT_EQ(r, UV_EINVAL);
   }
   {
-    const char* test_args[2] = {"a", "b"};
+    char* test_args[2] = {"a", "b"};
     ASSERT_OK(test_batch_script(batch_file, 2, test_args));
   }
   {
-    const char* test_args[2] = {"c is for cat", "d is for dog"};
+    char* test_args[2] = {"c is for cat", "d is for dog"};
     ASSERT_OK(test_batch_script(batch_file, 2, test_args));
   }
   {
-    const char* test_args[2] = {"\"", " \""};
+    char* test_args[2] = {"\"", " \""};
     ASSERT_OK(test_batch_script(batch_file, 2, test_args));
   }
   {
-    const char* test_args[2] = {"\\", "\\"};
+    char* test_args[2] = {"\\", "\\"};
     ASSERT_OK(test_batch_script(batch_file, 2, test_args));
   }
   {
-    const char* test_args[1] = {">file.txt"};
+    char* test_args[1] = {">file.txt"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {">file.txt"};
+    char* test_args[1] = {">file.txt"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"whoami.exe"};
+    char* test_args[1] = {"whoami.exe"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"&a.exe"};
+    char* test_args[1] = {"&a.exe"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"&echo hello "};
+    char* test_args[1] = {"&echo hello "};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[3] = {"&echo hello", "&whoami", ">file.txt"};
+    char* test_args[3] = {"&echo hello", "&whoami", ">file.txt"};
     ASSERT_OK(test_batch_script(batch_file, 3, test_args));
   }
   {
-    const char* test_args[1] = {"!TMP!"};
+    char* test_args[1] = {"!TMP!"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"key=value"};
+    char* test_args[1] = {"key=value"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"\"key=value\""};
+    char* test_args[1] = {"\"key=value\""};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"key = value"};
+    char* test_args[1] = {"key = value"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"key=[\"value\"]"};
+    char* test_args[1] = {"key=[\"value\"]"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[2] = {"", "a=b"};
+    char* test_args[2] = {"", "a=b"};
     ASSERT_OK(test_batch_script(batch_file, 2, test_args));
   }
   {
-    const char* test_args[1] = {"key=\"foo bar\""};
+    char* test_args[1] = {"key=\"foo bar\""};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"key=[\"my_value]"};
+    char* test_args[1] = {"key=[\"my_value]"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"key=[\"my_value\",\"other-value\"]"};
+    char* test_args[1] = {"key=[\"my_value\",\"other-value\"]"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"key\\=value"};
+    char* test_args[1] = {"key\\=value"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"key=\"&whoami\""};
+    char* test_args[1] = {"key=\"&whoami\""};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"key=\"value\"=5"};
+    char* test_args[1] = {"key=\"value\"=5"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"key=[\">file.txt\"]"};
+    char* test_args[1] = {"key=[\">file.txt\"]"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"%hello"};
+    char* test_args[1] = {"%hello"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"%PATH%"};
+    char* test_args[1] = {"%PATH%"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"%%cd:~,%"};
+    char* test_args[1] = {"%%cd:~,%"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"%PATH%PATH%"};
+    char* test_args[1] = {"%PATH%PATH%"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"\">file.txt"};
+    char* test_args[1] = {"\">file.txt"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"abc\"&echo hello"};
+    char* test_args[1] = {"abc\"&echo hello"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"123\">file.txt"};
+    char* test_args[1] = {"123\">file.txt"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[1] = {"\"&echo hello&whoami.exe"};
+    char* test_args[1] = {"\"&echo hello&whoami.exe"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
   {
-    const char* test_args[2] = {"\"hello^\"world\"", "hello &echo oh no >file.txt"};
+    char* test_args[2] = {"\"hello^\"world\"", "hello &echo oh no >file.txt"};
     ASSERT_OK(test_batch_script(batch_file, 2, test_args));
   }
   {
-    const char* test_args[1] = {"&whoami.exe"};
+    char* test_args[1] = {"&whoami.exe"};
     ASSERT_OK(test_batch_script(batch_file, 1, test_args));
   }
 
